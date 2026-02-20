@@ -176,3 +176,9 @@ a:hover { opacity: 0.9; }
     font-size: 40px;
   }
 }
+
+.recent.card {
+  background: rgba(18, 21, 27, 0.25);
+  border-color: rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(6px);
+}
