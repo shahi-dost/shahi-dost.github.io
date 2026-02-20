@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Shahi Dost — Experience</title>
+    <link rel="stylesheet" href="assets/style.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <a class="brand" href="index.html">Shahi Dost</a>
+        <nav class="nav">
+          <a href="index.html">About</a>
+          <a href="projects.html">Projects</a>
+          <a class="active" href="experience.html">Experience</a>
+          <a href="contact.html">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <h1>Experience</h1>
+
+      <section class="card">
+        <div class="row">
+          <h2>Role — Company</h2>
+          <div class="muted">Month YYYY – Month YYYY</div>
+        </div>
+        <ul class="bullets">
+          <li>Impact bullet with metric (latency, scale, $$$, users, etc.).</li>
+          <li>What you built + how (stack).</li>
+          <li>Hard problem you solved (reliability, performance, data quality).</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <div class="row">
+          <h2>Role — Company</h2>
+          <div class="muted">Month YYYY – Month YYYY</div>
+        </div>
+        <ul class="bullets">
+          <li>Impact bullet.</li>
+          <li>Impact bullet.</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container">© <span id="y"></span> Shahi Dost</div>
+    </footer>
+
+    <script>
+      document.getElementById("y").textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>
