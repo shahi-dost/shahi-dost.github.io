@@ -182,3 +182,19 @@ a:hover { opacity: 0.9; }
   border-color: rgba(255, 255, 255, 0.10);
   backdrop-filter: blur(6px);
 }
+
+#bg-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.site-header,
+.content,
+.footer {
+  position: relative;
+  z-index: 1;
+}
