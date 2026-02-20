@@ -1,0 +1,119 @@
+:root {
+  --bg: #0b0d10;
+  --card: #12151b;
+  --text: #e9eef5;
+  --muted: #aab6c5;
+  --border: rgba(255, 255, 255, 0.08);
+  --link: #e9eef5;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.55;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  background: rgba(11, 13, 16, 0.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+
+.site-header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+}
+
+.brand {
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 650;
+  letter-spacing: 0.2px;
+}
+
+.nav a {
+  color: var(--muted);
+  text-decoration: none;
+  margin-left: 14px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+}
+
+.nav a:hover {
+  color: var(--text);
+  border-color: var(--border);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.nav a.active {
+  color: var(--text);
+  border-color: var(--border);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+main.container {
+  padding-top: 28px;
+  padding-bottom: 48px;
+}
+
+h1 { font-size: 34px; margin: 0 0 10px 0; }
+h2 { font-size: 18px; margin: 0 0 8px 0; }
+
+.hero { margin-bottom: 18px; }
+.subhead { color: var(--muted); margin: 6px 0 0 0; }
+
+a { color: var(--link); }
+a:hover { opacity: 0.9; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px;
+  margin: 14px 0;
+}
+
+.muted { color: var(--muted); }
+
+.bullets { margin: 10px 0 0 18px; }
+.bullets li { margin: 6px 0; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.links a { margin-right: 12px; }
+
+.row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.footer {
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  padding: 22px 0;
+}
+@media (max-width: 720px) {
+  .grid { grid-template-columns: 1fr; }
+  .row { flex-direction: column; align-items: flex-start; }
+  .nav a { margin-left: 6px; }
+}
