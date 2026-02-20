@@ -183,6 +183,7 @@ a:hover { opacity: 0.9; }
   backdrop-filter: blur(6px);
 }
 
+/* Ensure the animated canvas is a true background */
 #bg-canvas {
   position: fixed;
   inset: 0;
@@ -192,9 +193,14 @@ a:hover { opacity: 0.9; }
   pointer-events: none;
 }
 
+/* Put site content above the canvas */
 .site-header,
 .content,
 .footer {
   position: relative;
   z-index: 1;
 }
+
+/* Let the canvas show through (your current CSS sets a body bg color) */
+html { background: #000; }
+.page { background: transparent; }
