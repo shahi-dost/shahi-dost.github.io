@@ -3,21 +3,60 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Your Name</title>
+    <title>Shahi Dost — About</title>
     <link rel="stylesheet" href="assets/style.css" />
   </head>
   <body>
-    <main style="max-width: 900px; margin: 40px auto; padding: 0 16px; font-family: system-ui;">
-      <h1>Your Name</h1>
-      <p>Backend / Data / SWE • <a href="https://www.linkedin.com/in/shahidost">LinkedIn</a> • <a href="https://github.com/shahi-dost">GitHub</a></p>
+    <header class="site-header">
+      <div class="container">
+        <a class="brand" href="index.html">Shahi Dost</a>
+        <nav class="nav">
+          <a class="active" href="index.html">About</a>
+          <a href="projects.html">Projects</a>
+          <a href="experience.html">Experience</a>
+          <a href="contact.html">Contact</a>
+        </nav>
+      </div>
+    </header>
 
-      <h2>Projects</h2>
-      <ul>
-        <li><strong>Project Name</strong> — one line. <a href="#">Demo</a> • <a href="#">Code</a></li>
-      </ul>
+    <main class="container">
+      <section class="hero">
+        <h1>Shahi Dost</h1>
+        <p class="subhead">
+          Backend / Data / SWE •
+          <a href="https://www.linkedin.com/in/shahidost" target="_blank" rel="noreferrer">LinkedIn</a>
+          •
+          <a href="https://github.com/shahi-dost" target="_blank" rel="noreferrer">GitHub</a>
+        </p>
+      </section>
 
-      <h2>Experience</h2>
-      <p>Role — Company (dates). One line impact.</p>
+      <section class="card">
+        <h2>About me</h2>
+        <p>
+          Write 3–5 sentences here: what you’re building, what roles you’re targeting,
+          and the “proof” (internships, TA work, projects).
+        </p>
+        <p>
+          Optional: add a 3-bullet “focus areas” list (Data Engineering, Backend APIs, ML pipelines, etc.).
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Highlights</h2>
+        <ul class="bullets">
+          <li>1-line impact metric / accomplishment.</li>
+          <li>Another strong proof point.</li>
+          <li>What you’re looking for right now (new grad, etc.).</li>
+        </ul>
+      </section>
     </main>
+
+    <footer class="footer">
+      <div class="container">© <span id="y"></span> Shahi Dost</div>
+    </footer>
+
+    <script>
+      document.getElementById("y").textContent = new Date().getFullYear();
+    </script>
   </body>
 </html>
