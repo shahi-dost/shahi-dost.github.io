@@ -1,0 +1,350 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mouse Digits Drop → Join Ring → Black Hole</title>
+  <style>
+    html, body { margin:0; height:100%; background:#000; overflow:hidden; }
+    canvas { display:block; width:100%; height:100%; }
+  </style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+(() => {
+  const canvas = document.getElementById("c");
+  const ctx = canvas.getContext("2d", { alpha: true });
+
+  // Offscreen starfield for perf
+  const starCanvas = document.createElement("canvas");
+  const starCtx = starCanvas.getContext("2d", { alpha: true });
+
+  let w=0, h=0, dpr=1;
+
+  function resize() {
+    dpr = Math.max(1, Math.floor(devicePixelRatio || 1));
+    w = innerWidth; h = innerHeight;
+
+    canvas.width = w*dpr; canvas.height = h*dpr;
+    canvas.style.width = w+"px"; canvas.style.height = h+"px";
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    starCanvas.width = w*dpr; starCanvas.height = h*dpr;
+    starCtx.setTransform(dpr,0,0,dpr,0,0);
+
+    buildStars();
+  }
+  addEventListener("resize", resize);
+
+  const reduceMotion = matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // -------- scene / ring params (same path logic as your ring) --------
+  const cx = () => w*0.5;
+  const cy = () => h*0.5;
+
+  // negative tilt => "bottom" (near side) can overlap the hole when drawn last
+  const tilt = -0.95;
+
+  const ringR = () => Math.min(w,h) * 0.34;
+  const horizonR = () => ringR() * 0.12;
+  const camZ = () => ringR() * 2.6;
+  const fov = 900;
+
+  const ringAngular = 1.65;
+  const inwardRate = 0.18;
+  const swirlBoostNear = 1.35;
+  const thickness = 0.30;
+
+  // visuals
+  const fontFamily = 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace';
+  const glyphRGB = "220,220,220";
+  const baseSize = 13;
+  const minAlpha = 0.80;
+  const maxAlpha = 1.00;
+
+  // normal ring spawn
+  const normalChars = "00000011111123456789";
+  const maxRingParts = 1400;
+  const ringSpawnPerSec = reduceMotion ? 0 : 420;
+
+  // mouse spawn
+  const mouseChars = "01";
+  const mouseIntervalMs = 500;
+  const mouseMaxParts = 500;
+
+  // drop phase config
+  const dropSeconds = 1.0;
+  const dropOffset = 18;          // spawn BELOW cursor by this many px
+  const dropSpeed = 120;          // px/s downward
+
+  // -------- stars --------
+  function buildStars() {
+    starCtx.clearRect(0,0,w,h);
+    starCtx.fillStyle = "black";
+    starCtx.fillRect(0,0,w,h);
+    const n = Math.floor((w*h)/5200);
+    for (let i=0;i<n;i++){
+      const x = Math.random()*w;
+      const y = Math.random()*h;
+      const a = Math.random()*0.16;
+      starCtx.fillStyle = `rgba(255,255,255,${a})`;
+      starCtx.fillRect(x,y,1,1);
+    }
+  }
+
+  // -------- 3D helpers --------
+  function rotateX(y,z,a){
+    const ca=Math.cos(a), sa=Math.sin(a);
+    return { y: y*ca - z*sa, z: y*sa + z*ca };
+  }
+
+  function project(x,y,z){
+    const yz = rotateX(y,z,tilt);
+    const x3 = x;
+    const y3 = yz.y;
+    const z3 = yz.z;
+
+    const zc = z3 + camZ();
+    const s = fov / (fov + zc);
+
+    return { sx: cx() + x3*s, sy: cy() + y3*s, s, z3 };
+  }
+
+  // invert projection approximately to ring-space on z=0 plane
+  // screen (sx,sy) -> (x,y) in ring-space assuming z=0
+  function screenToRingPlane(sx, sy) {
+    const dx = sx - cx();
+    const dy = sy - cy();
+    const scale = fov / (fov + camZ()); // approx since z=0
+    const x = dx / scale;
+    const yTilt = dy / scale;
+
+    // invert the X-rotation on y (since z=0)
+    // forward: y' = y*cos(tilt)
+    // so inverse: y = y'/cos(tilt)
+    const c = Math.cos(tilt);
+    const y = (Math.abs(c) < 1e-6) ? yTilt : (yTilt / c);
+
+    return { x, y };
+  }
+
+  // -------- pooled particles --------
+  const ringParts = [];
+  const ringPool = [];
+  const mouseParts = [];
+  const mousePool = [];
+
+  function spawnRing() {
+    const p = ringPool.pop() || {};
+    const R = ringR();
+
+    p.theta = Math.random()*Math.PI*2;
+    p.rad = R*(0.92 + Math.random()*0.10);
+    p.z = (Math.random()*2-1) * thickness * (R*0.06);
+
+    p.ch = normalChars[(Math.random()*normalChars.length)|0];
+    p.size = baseSize + Math.random()*10;
+    p.age = 0;
+    p.life = 3.2 + Math.random()*2.4;
+
+    ringParts.push(p);
+  }
+
+  // mouse position cache
+  let mx = w*0.5, my = h*0.5;
+  addEventListener("pointermove", (e) => { mx = e.clientX; my = e.clientY; });
+
+  function spawnMouse() {
+    if (reduceMotion) return;
+    if (mouseParts.length >= mouseMaxParts) return;
+
+    const p = mousePool.pop() || {};
+    p.mode = 0; // 0 = drop, 1 = ring-follow
+    p.t = 0;
+
+    p.sx = mx;
+    p.sy = my + dropOffset;  // below cursor
+    p.vy = dropSpeed + Math.random()*40;
+
+    p.ch = mouseChars[(Math.random()*mouseChars.length)|0];
+    p.size = baseSize + Math.random()*10;
+
+    // assigned on capture
+    p.theta = 0; p.rad = 0; p.z = 0;
+
+    mouseParts.push(p);
+  }
+
+  // shared ring path update (identical for both)
+  function updateRingPath(p, dt, R, H) {
+    p.rad *= (1 - inwardRate*dt);
+    const t = 1 - (p.rad - H) / (R - H);
+    const omega = ringAngular * (1 + t*t*swirlBoostNear);
+    p.theta += omega * dt;
+  }
+
+  // font caching
+  let currentFontPx = -1;
+  function setFont(px){
+    if (px !== currentFontPx){
+      currentFontPx = px;
+      ctx.font = `${px}px ${fontFamily}`;
+    }
+  }
+
+  let last = performance.now();
+  let ringSpawnAcc = 0;
+  let mouseSpawnAcc = 0;
+
+  function frame(now) {
+    const dt = Math.min(0.033, (now-last)/1000);
+    last = now;
+
+    // background
+    ctx.globalAlpha = 1;
+    ctx.drawImage(starCanvas, 0, 0, w, h);
+
+    const R = ringR();
+    const H = horizonR();
+
+    // spawn ring
+    ringSpawnAcc += dt;
+    const wantRing = ringSpawnPerSec * ringSpawnAcc;
+    const ringCount = Math.floor(wantRing);
+    if (ringCount > 0) {
+      ringSpawnAcc = 0;
+      for (let i=0;i<ringCount;i++){
+        if (ringParts.length < maxRingParts) spawnRing();
+      }
+    }
+
+    // spawn mouse digits every 0.5s
+    mouseSpawnAcc += dt*1000;
+    while (mouseSpawnAcc >= mouseIntervalMs) {
+      mouseSpawnAcc -= mouseIntervalMs;
+      spawnMouse();
+    }
+
+    // collect draw lists
+    const back = [];
+    const front = [];
+
+    // update ring parts
+    for (let i=ringParts.length-1;i>=0;i--){
+      const p = ringParts[i];
+      p.age += dt;
+
+      if (p.age > p.life || p.rad < H) {
+        ringParts.splice(i,1);
+        ringPool.push(p);
+        continue;
+      }
+
+      updateRingPath(p, dt, R, H);
+
+      const x = Math.cos(p.theta) * p.rad;
+      const y = Math.sin(p.theta) * p.rad;
+
+      const pr = project(x,y,p.z);
+      const depth = Math.max(0, Math.min(1, (pr.s - 0.20) / 0.95));
+      const fadeIn = Math.max(0, Math.min(1, (p.rad - H) / (R * 0.10)));
+      const alpha = (minAlpha + depth*(maxAlpha-minAlpha)) * fadeIn;
+
+      (pr.z3 > 0 ? back : front).push({ ch:p.ch, size:p.size, depth, alpha, sx:pr.sx, sy:pr.sy, z3:pr.z3 });
+    }
+
+    // update mouse parts
+    for (let i=mouseParts.length-1;i>=0;i--){
+      const p = mouseParts[i];
+      p.t += dt;
+
+      if (p.mode === 0) {
+        // DROP phase (screen space)
+        p.sy += p.vy * dt;
+
+        // capture after ~1s: convert to ring params so it follows the SAME path
+        if (p.t >= dropSeconds) {
+          const rp = screenToRingPlane(p.sx, p.sy);
+          p.theta = Math.atan2(rp.y, rp.x);
+
+          const rr = Math.sqrt(rp.x*rp.x + rp.y*rp.y);
+          // clamp to not start inside horizon
+          p.rad = Math.max(H*1.25, Math.min(R*1.05, rr));
+
+          p.z = 0;       // keep mouse digits on the main ring plane
+          p.mode = 1;    // now follow ring
+          p.t = 0;
+        }
+
+        // draw during drop (no depth, just solid)
+        const alpha = 0.92;
+        const px = (p.size + 0.5) | 0;
+        setFont(px);
+        ctx.fillStyle = `rgb(${glyphRGB})`;
+        ctx.globalAlpha = alpha;
+        ctx.fillText(p.ch, p.sx, p.sy);
+        ctx.globalAlpha = 1;
+        continue;
+      }
+
+      // RING phase: identical update
+      updateRingPath(p, dt, R, H);
+
+      const x = Math.cos(p.theta) * p.rad;
+      const y = Math.sin(p.theta) * p.rad;
+
+      // swallow
+      if (p.rad < H) {
+        mouseParts.splice(i,1);
+        mousePool.push(p);
+        continue;
+      }
+
+      const pr = project(x,y,p.z);
+      const depth = Math.max(0, Math.min(1, (pr.s - 0.20) / 0.95));
+      const fadeIn = Math.max(0, Math.min(1, (p.rad - H) / (R * 0.10)));
+      const alpha = (minAlpha + depth*(maxAlpha-minAlpha)) * fadeIn;
+
+      (pr.z3 > 0 ? back : front).push({ ch:p.ch, size:p.size, depth, alpha, sx:pr.sx, sy:pr.sy, z3:pr.z3 });
+    }
+
+    // draw far side
+    drawBatch(back);
+
+    // hole mask
+    const holePx = H * (fov/(fov + camZ())) * 1.9;
+    ctx.globalAlpha = 1;
+    ctx.beginPath();
+    ctx.arc(cx(), cy(), holePx, 0, Math.PI*2);
+    ctx.fillStyle = "rgba(0,0,0,1)";
+    ctx.fill();
+
+    // draw near side (overlap)
+    drawBatch(front);
+
+    requestAnimationFrame(frame);
+  }
+
+  function drawBatch(arr) {
+    ctx.fillStyle = `rgb(${glyphRGB})`;
+    for (let i=0;i<arr.length;i++){
+      const it = arr[i];
+      const size = it.size * (0.86 + it.depth*1.20);
+      const px = (size + 0.5) | 0;
+      if (px < 7) continue;
+      setFont(px);
+      ctx.globalAlpha = it.alpha;
+      ctx.fillText(it.ch, it.sx, it.sy);
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  resize();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
