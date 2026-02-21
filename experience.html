@@ -6,7 +6,9 @@
     <title>Shahi Dost — Experience</title>
     <link rel="stylesheet" href="assets/style.css" />
   </head>
-  <body>
+  <body>  
+    <canvas id="gravity-grid"></canvas>
+
     <header class="site-header">
       <div class="container">
         <a class="brand" href="index.html">Shahi Dost</a>
@@ -19,33 +21,86 @@
       </div>
     </header>
 
-    <main class="container">
-      <h1>Experience</h1>
+    <main class="container experience-wrapper">  
+      <div class="experience-content">
+        <h1 style='text-align:center; margin-bottom:40px; font-size: 60px; font-family:"Courier New",monospace; '> Experience</h1>
 
-      <section class="card">
-        <div class="row">
-          <h2>Role — Company</h2>
-          <div class="muted">Month YYYY – Month YYYY</div>
-        </div>
-        <ul class="bullets">
-          <li>Impact bullet with metric (latency, scale, $$$, users, etc.).</li>
-          <li>What you built + how (stack).</li>
-          <li>Hard problem you solved (reliability, performance, data quality).</li>
-        </ul>
-      </section>
+        <div class="timeline">
+          <div class="timeline-item color-1">
+            <div class="timeline-marker"></div>
+            <div class="timeline-content-1">
+              <h2>Founding Software Engineer <span class="employer">— Clarity</span></h2>
+              <div class="time">Sept 2025 - Present</div>
+              <p class="summary">Built backend for app from the ground up using Redis, PostgreSQL, Docker, and Kubernetes, handling ~2k calls from ~50 testers.</p>
+            </div>
+          </div>
 
-      <section class="card">
-        <div class="row">
-          <h2>Role — Company</h2>
-          <div class="muted">Month YYYY – Month YYYY</div>
-        </div>
-        <ul class="bullets">
-          <li>Impact bullet.</li>
-          <li>Impact bullet.</li>
-        </ul>
-      </section>
+          <div class="timeline-item color-2">
+            <div class="timeline-marker"></div>
+            <div class="timeline-content-2">
+              <h2>Undergrad Researcher <span class="employer">— Computational & Cognitive Neuroscience Lab, Dartmouth</span></h2>
+              <div class="time">Jan 2024 - Present</div>
+              <p class="summary">Conducted research in learning and decision-making by developing computational experiements and data analysis</p>
+            </div>
+          </div>
+
+          <div class="timeline-item color-1">
+            <div class="timeline-marker"></div>
+            <div class="timeline-content-1">
+              <h2>Software Engineering Intern <span class="employer">— Protiviti</span></h2>
+              <div class="time">June 2025 - Aug 2025</div>
+              <p class="summary"> Orchestrated ETL pipelines for XGBoost model to predict 24-hour traffic forecasts for all 1.2k of client's stores.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item color-2">
+            <div class="timeline-marker"></div>
+            <div class="timeline-content-2">
+              <h2>TA for Intro to Programming <span class="employer">— Dartmouth</span></h2>
+              <div class="time">March 2025 - June 2025</div>
+              <p class="summary">Led students through foundational computer science concepts, debugging sessions, and weekly office hours.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item color-1">
+            <div class="timeline-marker"></div>
+            <div class="timeline-content-1">
+              <h2>Software Engineering Intern <span class="employer">— Izquierdo Lab, UCLA</span></h2>
+              <div class="time">Oct 2024 - Jan 2025</div>
+              <p class="summary">Engineered decision making experiments and computer vision models for lab rats to understand neural mechanisms.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item color-2">
+            <div class="timeline-marker"></div>
+            <div class="timeline-content-2">
+              <h2>TA for Discrete and Probabilistic Systems <span class="employer">— Dartmouth</span></h2>
+              <div class="time"> June 2024 - Aug 2024</div>
+              <p class="summary">Supported students in understanding statistical statistical inference, probability, and discrete theory through office hours and 1:1 tutoring.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item color-1">
+            <div class="timeline-marker"></div>
+            <div class="timeline-content-1">
+              <h2>TA for Object Oriented Programming <span class="employer">— Dartmouth</span></h2>
+              <div class="time">March 2024 - June 2024</div>
+              <p class="summary">Assisted students in understanding advanced software design patterns, architecture, and Java fundamentals through office hours and recitation.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item color-2">
+            <div class="timeline-marker"></div>
+            <div class="timeline-content-2">
+              <h2>Tutor for Object Oriented Programming <span class="employer">— Dartmouth</span></h2>
+              <div class="time">Sept 2023 - March 2024</div>
+              <p class="summary">Provided 1-on-1 personalized tutoring to help students grasp core OOP concepts and ace their midterms.</p>
+            </div>
+          </div>
+        </div> 
+      </div> 
     </main>
-
+    
     <footer class="footer">
       <div class="container">© <span id="y"></span> Shahi Dost</div>
     </footer>
@@ -53,5 +108,7 @@
     <script>
       document.getElementById("y").textContent = new Date().getFullYear();
     </script>
+    <canvas id="bg-canvas"></canvas>
+    <script src="assets/network.js"></script>
   </body>
 </html>

@@ -325,25 +325,16 @@ function drawBatch(arr, holePx, allowOverlap) {
         isMouse: true
       });
     }
-    const holePx = H * (fov / (fov + camZ()));
+    const holePx = H * (fov / (fov + camZ())) * 1.9;
 
     drawBatch(back, holePx, false);
 
 
     ctx.globalAlpha = 1;
     ctx.beginPath();
-    // Top half: Strict circular arc to clip the back swirl cleanly
-    ctx.arc(cx(), cy(), holePx, 0, Math.PI, true);
-    // Bottom half: Elliptical arc matching the front swirl's 3D tilt
-    ctx.ellipse(
-      cx(), cy(), 
-      holePx, holePx * Math.abs(Math.cos(tilt)), 
-      0, Math.PI, 0, true
-    );
+    ctx.arc(cx(), cy(), holePx, 0, Math.PI * 2);
     ctx.fillStyle = "rgb(0, 0, 0)";
     ctx.fill();
-
-
 
     drawBatch(front, holePx, true);
 

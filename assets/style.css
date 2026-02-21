@@ -142,7 +142,7 @@ a:hover { opacity: 0.9; }
 
 .about-photo img {
   width: 100%;
-  height: 200%;
+  height: 380px;
   object-fit: cover;
   border-radius: 18px;
   border: 1px solid var(--border);
@@ -158,12 +158,12 @@ a:hover { opacity: 0.9; }
 .about-bio {
   color: var(--muted);
   font-size: 18px;
-  margin: 0;
+  margin: 0 0 12px 0;
   max-width: 52ch;
-
   background: rgba(18, 21, 27, 0.25);
   border-color: rgba(255, 255, 255, 0.10);
   backdrop-filter: blur(6px);
+  
 }
 
 .recent h2 {
@@ -197,7 +197,11 @@ a:hover { opacity: 0.9; }
   z-index: 0;
   pointer-events: none;
 }
-
+/* Ensure main content is visible over the canvas */
+.site-header, .container, .footer {
+  position: relative;
+  z-index: 1;
+}
 /* Put site content above the canvas */
 .site-header,
 .content,
@@ -209,3 +213,278 @@ a:hover { opacity: 0.9; }
 /* Let the canvas show through (your current CSS sets a body bg color) */
 html { background: #000; }
 .page { background: transparent; }
+
+/* --- centered contact page (bigger type + icons, no button backgrounds) --- */
+.contact-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 64px 0;
+}
+
+.contact-stack {
+  width: 100%;
+  max-width: 860px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+
+.contact-center h1 {
+  margin: 0;
+  font-size: clamp(44px, 6vw, 66px);
+  line-height: 1.05;
+  letter-spacing: -0.6px;
+}
+
+.contact-center .subhead {
+  margin: 14px 0 0 0;
+  font-size: 20px;
+  line-height: 1.6;
+  max-width: 60ch;
+}
+
+.icon-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 26px;
+}
+
+.icon-link {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--text);
+  padding: 6px 10px; /* click target without a visible box */
+}
+
+.icon-link svg {
+  width: 34px;
+  height: 34px;
+}
+
+.icon-link span {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.icon-link:hover span {
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+
+.icon-link:focus-visible {
+  outline: 2px solid rgba(233, 238, 245, 0.45);
+  outline-offset: 6px;
+  border-radius: 12px;
+}
+
+.contact-note {
+  font-size: 16px;
+  max-width: 70ch;
+}
+
+/* --- Alternating Vertical Timeline --- */
+.timeline {
+  position: relative;
+  max-width: 900px;
+  margin: 32px auto;
+  padding: 10px 0;
+}
+
+/* The center vertical line */
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--border);
+  transform: translateX(-50%);
+}
+
+.timeline-item {
+  position: relative;
+  width: 50%;
+  margin-bottom: 40px;
+}
+
+/* Left side (Odd items) */
+.timeline-item:nth-child(odd) {
+  left: 0;
+  padding-right: 40px;
+  text-align: right;
+}
+
+/* Right side (Even items) */
+.timeline-item:nth-child(even) {
+  left: 50%;
+  padding-left: 40px;
+  text-align: left;
+}
+
+/* The hollow dots */
+.timeline-marker {
+  position: absolute;
+  top: 4px; /* Aligns with the first line of text */
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 2px solid; /* Inherits color from the item */
+  z-index: 2;
+  transition: all 0.2s ease;
+}
+
+/* Position marker exactly on the center line for Left items */
+.timeline-item:nth-child(odd) .timeline-marker {
+  right: -7px; 
+}
+
+/* Position marker exactly on the center line for Right items */
+.timeline-item:nth-child(even) .timeline-marker {
+  left: -7px;
+}
+
+/* Add a slight glow on hover to the marker */
+.timeline-item:hover .timeline-marker {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 10px currentColor;
+}
+
+/* Content layout rounded borders and red if 2 or blue if 1outlines */
+.timeline-content {
+  padding: 0;
+  background-color: #000;
+  margin: auto;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  padding: 18px;
+  position: relative;
+}
+.timeline-content-1 {
+  padding: 0;
+  background-color: #000;
+  margin: auto;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  padding: 18px;
+  position: relative;
+  border-color: #ff6464; /* Red/Coral */
+}
+.timeline-content-2 {
+  padding: 0;
+  background-color: #000;
+  margin: auto;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  padding: 18px;
+  position: relative;
+  border-color: #64baff; /* Light Blue */
+}
+
+.timeline-content h2 {
+  margin: 0 0 4px 0;
+  font-size: 18px;
+  font-weight: 600;
+  /* Color is inherited from the .color-X class */
+}
+
+/* Faded version of the solid color for the employer */
+.timeline-content .employer {
+  opacity: 0.85; 
+  font-weight: 400;
+}
+
+.timeline-content .time {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+/* Explicitly white 1-sentence summary */
+.timeline-content .summary {
+  margin: 8px 0 0 0;
+  color: #ffffff;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* --- Colorful Themes --- */
+/* The color cascades down to the h2 text and changes border color to be red or blue */
+.color-2 h2, .color-2 .timeline-marker { color: #64baff; } /* Light Blue */
+.color-1 h2, .color-1 .timeline-marker { color: #ff6464; } /* Red/Coral */
+
+/* --- Mobile Fallback --- */
+/* On smaller screens, revert back to a left-aligned timeline so it doesn't get squished */
+@media (max-width: 768px) {
+  .timeline::before {
+    left: 12px;
+    transform: none;
+  }
+  .timeline-item {
+    width: 100%;
+    padding-left: 40px !important;
+    padding-right: 0 !important;
+    text-align: left !important;
+  }
+  .timeline-item:nth-child(even) {
+    left: 0;
+  }
+  .timeline-item:nth-child(odd) .timeline-marker,
+  .timeline-item:nth-child(even) .timeline-marker {
+    left: 5px;
+    right: auto;
+  }
+}
+
+/* --- Gravity Grid Container --- */
+.experience-wrapper {
+  position: relative;
+  /* Add a little min-height just in case content is small */
+  min-height: 80vh; 
+}
+
+#gravity-grid {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;          
+  pointer-events: none; 
+}
+
+.experience-content {
+  position: relative;
+  z-index: 1; /* Keeps text above the grid */
+}
+/* Ensure all page content naturally sits above the canvas */
+.site-header,
+main.container,
+.footer {
+  position: relative;
+  z-index: 1;
+}
+/* This will now ONLY affect the Projects page */
+.projects-page main.container h1 {
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto; /* Centers it if desired */
+  padding: 10px 20px; /* Adds space between text and that green border */
+  border: 2px solid #0f0; /* Matches your terminal green */
+  border-radius: 12px;
+}
+
+/* Apply the green outline only to cards on the projects page */
+.projects-page .grid .card {
+  border: 2px solid #0f0 !important;
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.2);
+  background: rgba(18, 21, 27, 0.85);
+}

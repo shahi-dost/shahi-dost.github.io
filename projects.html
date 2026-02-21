@@ -6,7 +6,7 @@
     <title>Shahi Dost — Projects</title>
     <link rel="stylesheet" href="assets/style.css" />
   </head>
-  <body>
+  <body class="projects-page">
     <header class="site-header">
       <div class="container">
         <a class="brand" href="index.html">Shahi Dost</a>
@@ -23,34 +23,365 @@
       <h1>Projects</h1>
 
       <div class="grid">
+
         <article class="card">
-          <h2>Project Name</h2>
-          <p class="muted">Tech: Python • FastAPI • Postgres</p>
-          <p>1–2 sentence description with a concrete result.</p>
+          <h2>Video-Only Lip Reading</h2>
+          <p class="muted">Tech: MediaPipe • TensorFlow • Keras</p>
+          <p>Trained a specialized ML model on 3,000 datasets by aligning transcripts to frames and generating landmark sequences.</p>
           <p class="links">
-            <a href="#" target="_blank" rel="noreferrer">Demo</a>
-            <a href="#" target="_blank" rel="noreferrer">Code</a>
+            <a href="https://github.com/shahi-dost/ML_lip_reading?tab=readme-ov-file" target="_blank" rel="noreferrer">View Code</a>
           </p>
         </article>
 
         <article class="card">
-          <h2>Project Name</h2>
-          <p class="muted">Tech: Spark • Delta • AWS</p>
-          <p>1–2 sentence description with a concrete result.</p>
+          <h2>Automated Key Rotation</h2>
+          <p class="muted">Tech: AWS (KMS, S3, Lambda) • Python</p>
+          <p>Eliminated manual re-encryption by orchestrating daily EventBridge-to-Lambda rotations, reducing stale-key exposure.</p>
           <p class="links">
-            <a href="#" target="_blank" rel="noreferrer">Writeup</a>
-            <a href="#" target="_blank" rel="noreferrer">Code</a>
+            <a href="https://github.com/shahi-dost/Automated_Keys/wiki" target="_blank" rel="noreferrer">View Code</a>
+          </p>
+        </article>
+
+        <article class="card">
+          <h2>Feature Flag & Remote Config</h2>
+          <p class="muted">Tech: OpenAPI • FastAPI • Python • PostgreSQL</p>
+          <p>Built a secure service with API-key auth and RBAC, utilizing caching and ETags to minimize configuration fetch latency.</p>
+          <p class="links">
+            <a href="https://github.com/shahi-dost/Feature_Flag/wiki" target="_blank" rel="noreferrer">View Code</a>
+          </p>
+        </article>
+
+        <article class="card">
+          <h2>AI-Powered Trading Bot (SPY)</h2>
+          <p class="muted">Tech: Python • Alpaca Markets API • Machine Learning</p>
+          <p>Automated trading via sentiment analysis of news headlines, achieving returns 90% higher than the standard SPY index.</p>
+          <p class="links">
+            <a href="https://github.com/shahi-dost/TradingBot" target="_blank" rel="noreferrer">Access Link</a>
+          </p>
+        </article>
+
+
+        <article class="card">
+          <h2>Campaign & User Trend Analysis</h2>
+          <p class="muted">Tech: MySQL • Tableau • Pandas • Matplotlib</p>
+          <p>Developed interactive dashboards to visualize user engagement and campaign effectiveness, driving future marketing strategy.</p>
+          <p class="links">
+            <a href="https://github.com/shahi-dost/OnlineMarketplaceAnalysis" target="_blank" rel="noreferrer">Access Link</a>
+          </p>
+        </article>
+
+
+        <article class="card">
+          <h2>fMRI Music Genre ID</h2>
+          <p class="muted">Tech: Python • NumPy • Sklearn</p>
+          <p>Classified brain images for 5 genres with 80% accuracy, processing over 22,000 features per sample using SVMs.</p>
+          <p class="links">
+            <a href="https://github.com/shahi-dost/fMRI-Classification" target="_blank" rel="noreferrer">Access Link</a>
+          </p>
+        </article>
+
+        <article class="card">
+          <h2>Neural Network Digit Classifier</h2>
+          <p class="muted">Tech: Python • NumPy</p>
+          <p>Achieved 90% accuracy using custom forward and backward propagation to optimize weights through gradient descent.</p>
+          <p class="links">
+            <a href="https://github.com/shahi-dost/NueralNetwork" target="_blank" rel="noreferrer">Access Link</a>
           </p>
         </article>
       </div>
     </main>
-
-    <footer class="footer">
+<footer class="footer">
       <div class="container">© <span id="y"></span> Shahi Dost</div>
     </footer>
 
+    <canvas id="bg-canvas"></canvas>
+    
     <script>
       document.getElementById("y").textContent = new Date().getFullYear();
+
+      // --- Matrix Digital Rain + Pop-up Terminals ---
+      // FIX: Changed "gravity-grid" to "bg-canvas" to match your HTML
+      const canvas = document.getElementById("bg-canvas"); 
+      const ctx = canvas.getContext("2d");
+
+      let w, h;
+      const fontSize = 16;
+      let streams = []; 
+      const chars = '01';
+
+      function initMatrix() {
+        w = window.innerWidth;
+        h = window.innerHeight;
+        canvas.width = w;
+        canvas.height = h;
+
+        let numStreams = Math.floor(w / 15); // Adjust density
+        
+        streams = [];
+        for (let i = 0; i < numStreams; i++) {
+          streams.push({
+            x: i * 15,
+            y: Math.random() * -100,
+            isWord: Math.random() < 0.15,
+            wordIndex: 0
+          });
+        }
+      }
+      // --- 1. PARALLAX SCROLL EFFECT ---
+      let lastScrollY = window.scrollY;
+      window.addEventListener("scroll", () => {
+        let currentScrollY = window.scrollY;
+        let delta = currentScrollY - lastScrollY;
+        let shift = delta / fontSize;
+        for (let i = 0; i < streams.length; i++) {
+          streams[i].y -= shift * 0.8; 
+        }
+        lastScrollY = currentScrollY;
+      });
+
+      // --- 2. TERMINAL POP-UP SYSTEM ---
+      class HackerWindow {
+        constructor(x, y) {
+          this.x = x;
+          this.y = y;
+          this.w = 400; 
+          this.h = 220; 
+          this.lines = [];
+          this.lineColors = []; 
+          this.isTyping = true;
+          this.isDead = false;
+          
+          this.progress = 0;
+          this.loadingActive = false;
+          
+          const sequences = [
+            [
+              "root@sys:~# override_firewall --force",
+              "Connecting to target user...",
+              "Injecting VIRUS... [OK]",
+              "LOADING_BAR",
+              "VIRUS Uploaded completed successfully.",
+              "Connection terminated."
+            ],
+            [
+              "root@sys:~# decrypt --md5 hash_vault",
+              "Intercepting authentication token...",
+              "Brute-forcing admin credentials...",
+              "LOADING_BAR",
+              "Match found: admin_access.",
+              "Security BREACH detected."
+            ],
+            [
+              "root@sys:~# scrape_db -all",
+              "Bypassing isolated network partition...",
+              "Accessing root user database...",
+              "LOADING_BAR",
+              "4.2TB data exfiltrated.",
+              "Clearing logs... [OK]"
+            ],
+            [
+              "root@sys:~# overload_core_process",
+              "Disabling internal cooling systems...",
+              "Overriding safety protocols...",
+              "LOADING_BAR",
+              "CRITICAL: Core temperature exceeding limits.",
+              "System FAILURE imminent."
+            ],
+            [
+              "root@sys:~# override_firewall --force",
+              "대상에 연결 중...",
+              "보안 규칙 우회... [OK]",
+              "LOADING_BAR",
+              "임시 경로가 열렸습니다.",
+              "연결 종료."
+            ],
+            [
+              "root@sys:~# overload_core_process",
+              "تعطيل أنظمة التبريد الداخلية...",
+              "تجاوز بروتوكولات الأمان...",
+              "LOADING_BAR",
+              "حرِج: الحرارة تتجاوز الحد.",
+              "فشل النظام وشيك."
+            ]
+
+          ];
+          
+          this.sequence = sequences[Math.floor(Math.random() * sequences.length)];
+          this.seqIndex = 0;
+          this.typeTimer = 0;     
+          this.cursorBlink = 0;
+        }
+
+        update() {
+          if (this.isDead) return;
+          this.cursorBlink++;
+
+          if (this.loadingActive) {
+            this.progress += (Math.random() * 2 + 0.5); 
+            
+            if (this.progress >= 100) {
+              this.progress = 100;
+              this.loadingActive = false;
+              this.typeTimer = 20; 
+            }
+            
+            let totalBars = 20;
+            let filled = Math.floor((this.progress / 100) * totalBars);
+            let bar = "#".repeat(filled) + "_".repeat(totalBars - filled);
+            this.lines[this.lines.length - 1] = `package loading: [${bar}] ${Math.floor(this.progress)}%`;
+            return;
+          }
+
+          if (this.isTyping) {
+            this.typeTimer--;
+            if (this.typeTimer <= 0) {
+              if (this.seqIndex < this.sequence.length) {
+                let nextLine = this.sequence[this.seqIndex];
+                
+                let isRed = Math.random() < 0.20 || nextLine.includes("VIRUS") || nextLine.includes("CRITICAL") || nextLine.includes("FAILURE") || nextLine.includes("BREACH");
+                let colorToUse = isRed ? "#ff4444" : "#0f0";
+
+                if (nextLine === "LOADING_BAR") {
+                  this.loadingActive = true;
+                  this.progress = 0;
+                  this.lines.push(`package loading: [____________________] 0%`);
+                  this.lineColors.push(colorToUse);
+                } else {
+                  this.lines.push(nextLine);
+                  this.lineColors.push(colorToUse);
+                }
+                
+                this.seqIndex++;
+                this.typeTimer = Math.floor(Math.random() * 20) + 10; 
+              } else {
+                this.isTyping = false;
+                this.typeTimer = 90; 
+              }
+            }
+          } else {
+            this.typeTimer--;
+            if (this.typeTimer <= 0) {
+              this.isDead = true;
+            }
+          }
+        }
+
+        draw(windowCtx) {
+          if (this.isDead) return;
+
+          windowCtx.fillStyle = "rgba(11, 13, 16, 0.95)";
+          windowCtx.fillRect(this.x, this.y, this.w, this.h);
+          
+          windowCtx.strokeStyle = "#0f0";
+          windowCtx.lineWidth = 1;
+          windowCtx.strokeRect(this.x, this.y, this.w, this.h);
+          
+          windowCtx.fillStyle = "#0f0";
+          windowCtx.fillRect(this.x, this.y, this.w, 24);
+          windowCtx.fillStyle = "#000";
+          windowCtx.font = 'bold 12px "Fixedsys", "Courier New", monospace';
+          windowCtx.textAlign = "left";
+          windowCtx.textBaseline = "middle";
+          windowCtx.fillText("Terminal - sys_override.exe", this.x + 10, this.y + 12);
+
+          windowCtx.font = '13px "Fixedsys", "Courier New", monospace';
+          
+          for (let i = 0; i < this.lines.length; i++) {
+            let text = this.lines[i];
+            windowCtx.fillStyle = this.lineColors[i];
+            
+            if (i === this.lines.length - 1 && this.isTyping && !this.loadingActive) {
+              text += (Math.floor(this.cursorBlink / 10) % 2 === 0) ? " █" : "";
+            }
+            windowCtx.fillText(text, this.x + 12, this.y + 46 + (i * 22));
+          }
+        }
+      }
+
+      let popups = [];
+
+      function spawnPopup() {
+        let isLeft = Math.random() > 0.5;
+        let xPos;
+        if (isLeft) {
+          xPos = Math.random() * (w * 0.15) + 20; 
+        } else {
+          xPos = w - 400 - (Math.random() * (w * 0.15) + 20); 
+        }
+        let yPos = Math.random() * (h - 300) + 40; 
+        
+        popups.push(new HackerWindow(xPos, yPos));
+        setTimeout(spawnPopup, Math.random() * 4000 + 2000);
+      }
+      
+      setTimeout(spawnPopup, 1000);
+
+      // --- 3. THE MAIN DRAW LOOP ---
+      function drawMatrix() {
+        ctx.fillStyle = 'rgba(11, 13, 16, 0.0385)'; 
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.font = fontSize + 'px "Fixedsys", "Consolas", monospace';
+        ctx.textAlign = "center";
+
+        const targetWord = "SHAHIDOST";
+
+        for (let i = 0; i < streams.length; i++) {
+          let s = streams[i];
+          
+          let text;
+          // Check if this specific stream is flagged as a word stream
+          if (s.isWord) {
+            // Pick the next letter of SHAHIDOST based on the stream's index
+            text = targetWord.charAt(s.wordIndex % targetWord.length);
+            s.wordIndex++; // Move to the next letter for the next frame
+            ctx.fillStyle = 'red';
+          } else {
+            text = chars.charAt(Math.floor(Math.random() * chars.length));
+            ctx.fillStyle = '#0f0';
+          }
+          
+          const x = s.x; 
+          const y = s.y * fontSize;           
+
+          let randomChance = Math.random();
+          if (randomChance > 0.90) ctx.fillStyle = 'red';
+          else 
+
+          ctx.fillText(text, x, y);
+
+          // If the stream hits the bottom (or acts as a hard reset)
+          if ((y > h && Math.random() > 0.975) || (y > h + fontSize * 10)) {
+            s.y = -1; 
+            s.x = Math.random() * w; 
+            // Re-roll its personality every time it resets!
+            s.isWord = Math.random() < 0.15;
+            s.wordIndex = 0; 
+          }
+          
+          s.y++;
+        }
+
+        for (let i = popups.length - 1; i >= 0; i--) {
+          popups[i].update();
+          popups[i].draw(ctx);
+          if (popups[i].isDead) {
+            popups.splice(i, 1);
+          }
+        }
+
+        const textElements = document.querySelectorAll('.timeline-content, h1, .site-header');
+        textElements.forEach(el => {
+          const rect = el.getBoundingClientRect();
+          ctx.clearRect(rect.left - 10, rect.top - 10, rect.width + 20, rect.height + 20);
+        });
+
+        setTimeout(() => requestAnimationFrame(drawMatrix), 60);
+      }
+
+      window.addEventListener("resize", initMatrix);
+      initMatrix();
+      drawMatrix();
     </script>
   </body>
 </html>

@@ -209,6 +209,10 @@
 
     const R = ringR();
     const H = horizonR();
+    const holePx = H * (fov / (fov + camZ())) * 1.9;
+    const overlapBandPx = 10;              // thickness of allowed overlap rim
+    const killR = holePx - overlapBandPx;  // anything deeper than this is forced invisible
+    const killR2 = killR * killR;
 
     // spawn ring
     ringSpawnAcc += dt;
@@ -220,7 +224,7 @@
         if (ringParts.length < maxRingParts) spawnRing();
       }
     }
-
+    
     // spawn mouse digits every 0.5s
     mouseSpawnAcc += dt*1000;
     while (mouseSpawnAcc >= mouseIntervalMs) {
@@ -249,6 +253,9 @@
       const y = Math.sin(p.theta) * p.rad;
 
       const pr = project(x,y,p.z);
+      const dx = pr.sx - cx();
+      const dy = pr.sy - cy();
+      if (dx*dx + dy*dy < killR2) continue;
       const depth = Math.max(0, Math.min(1, (pr.s - 0.20) / 0.95));
       const fadeIn = Math.max(0, Math.min(1, (p.rad - H) / (R * 0.10)));
       const alpha = (minAlpha + depth*(maxAlpha-minAlpha)) * fadeIn;
@@ -304,6 +311,9 @@
       }
 
       const pr = project(x,y,p.z);
+      const dx = pr.sx - cx();
+      const dy = pr.sy - cy();
+      if (dx*dx + dy*dy < killR2) continue;
       const depth = Math.max(0, Math.min(1, (pr.s - 0.20) / 0.95));
       const fadeIn = Math.max(0, Math.min(1, (p.rad - H) / (R * 0.10)));
       const alpha = (minAlpha + depth*(maxAlpha-minAlpha)) * fadeIn;
@@ -315,17 +325,16 @@
     drawBatch(back);
 
     // hole mask
-    const holePx = H * (fov/(fov + camZ())) * 1.9;
     ctx.globalAlpha = 1;
     ctx.beginPath();
-    ctx.arc(cx(), cy(), holePx, 0, Math.PI*2);
+    ctx.arc(cx(), cy(), holePx + 1, 0, Math.PI * 2);
     ctx.fillStyle = "rgba(0,0,0,1)";
     ctx.fill();
 
     // draw near side (overlap)
     drawBatch(front);
 
-    requestAnimationFrame(frame);
+    requestAnimationwfwe fwe fwe2f Frame(frame);
   }
 
   function drawBatch(arr) {
