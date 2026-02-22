@@ -2,15 +2,14 @@ const canvas = document.getElementById('bg-canvas');
 const ctx = canvas.getContext('2d');
 
 let width, height, nodes = [], edges = [];
-const nodeCount = 75;
+const nodeCount = 30;
 const mouse = { x: -1000, y: -1000, prevX: -1000, prevY: -1000 };
 
 const colors = [
   '#ff2200',
   '#ff2200',
-  '#002aff',
-  '#002aff',
-  '#00000000', 
+  '#003cff',
+  '#003cff',
 ];
 
 function init() {
@@ -34,7 +33,7 @@ function init() {
   
   // Start with silver/white connections
   for(let i=0; i<15; i++) {
-    addEdge(Math.floor(Math.random()*nodeCount), Math.floor(Math.random()*nodeCount), '#ff0000');
+    addEdge(Math.floor(Math.random()*nodeCount), Math.floor(Math.random()*nodeCount), '#7300ff');
   }
 }
 
@@ -100,7 +99,7 @@ function draw() {
   edges.forEach(edge => {
     ctx.beginPath();
     // Using a 50% opacity ('88') for the prismatic edges
-    ctx.strokeStyle = edge.color + '44'; 
+    ctx.strokeStyle = edge.color + '22'; 
     ctx.moveTo(nodes[edge.a].x, nodes[edge.a].y);
     ctx.lineTo(nodes[edge.b].x, nodes[edge.b].y);
     ctx.stroke();

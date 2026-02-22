@@ -42,13 +42,13 @@
   const camZ = () => ringR() * 0.96;
   const fov = 1200;
 
-  const ringAngular = .35;
+  const ringAngular = .75;
   const swirlBoostNear = 2;;
   const inwardRateInner = 0.35;
   const inwardRateOuter = 0.2;
 
   const omegaOuterMult = 0.28;
-let globalHue = 0; // Tracks the rainbow position
+  let globalHue = 0; // Tracks the rainbow position
   const thickness = 0.75;
 
   const fontFamily =
@@ -58,7 +58,7 @@ let globalHue = 0; // Tracks the rainbow position
   const minAlpha = 0.8;
   const maxAlpha = 1.0;
 
-  const ringChars = "01234567890123456789";
+  const ringChars = "01";
   const maxRingParts = 4000;
   const ringSpawnPerSec = reduceMotion ? 0 : 200;
 

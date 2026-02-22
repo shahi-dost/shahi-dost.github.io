@@ -158,12 +158,12 @@ a:hover { opacity: 0.9; }
 .about-bio {
   color: var(--muted);
   font-size: 18px;
-  margin: 0 0 12px 0;
+  margin: 12px;
+  padding: 12px;
   max-width: 52ch;
-  background: rgba(18, 21, 27, 0.25);
+  background: rgba(18, 21, 27, 0.85);
   border-color: rgba(255, 255, 255, 0.10);
   backdrop-filter: blur(6px);
-  
 }
 
 .recent h2 {
@@ -183,9 +183,8 @@ a:hover { opacity: 0.9; }
 }
 
 .recent.card {
-  background: rgba(18, 21, 27, 0.25);
-  border-color: rgba(255, 255, 255, 0.10);
-  backdrop-filter: blur(6px);
+  background: rgba(18, 21, 27, 0.85);
+  border-color: rgba(255, 255, 255, 0.20);
 }
 
 /* Ensure the animated canvas is a true background */
@@ -399,7 +398,7 @@ html { background: #000; }
 
 /* Faded version of the solid color for the employer */
 .timeline-content .employer {
-  opacity: 0.85; 
+  opacity: 1; 
   font-weight: 400;
 }
 
@@ -412,15 +411,15 @@ html { background: #000; }
 /* Explicitly white 1-sentence summary */
 .timeline-content .summary {
   margin: 8px 0 0 0;
-  color: #ffffff;
-  font-size: 15px;
+  color: #fff2f2;
+  font-size: 16px;
   line-height: 1.6;
 }
 
 /* --- Colorful Themes --- */
 /* The color cascades down to the h2 text and changes border color to be red or blue */
-.color-2 h2, .color-2 .timeline-marker { color: #64baff; } /* Light Blue */
-.color-1 h2, .color-1 .timeline-marker { color: #ff6464; } /* Red/Coral */
+.color-2 h2, .color-2 .timeline-marker { color: #008cff; } /* Light Blue */
+.color-1 h2, .color-1 .timeline-marker { color: #ff0051; } /* Red/Coral */
 
 /* --- Mobile Fallback --- */
 /* On smaller screens, revert back to a left-aligned timeline so it doesn't get squished */
@@ -486,5 +485,24 @@ main.container,
 .projects-page .grid .card {
   border: 2px solid #0f0 !important;
   box-shadow: 0 0 8px rgba(0, 255, 0, 0.2);
-  background: rgba(18, 21, 27, 0.85);
+  background: rgba(0, 0, 0, 1);
+}
+
+/* Optional: Add a dark overlay to the body to "push" the background further back */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(11, 13, 16, 1); /* Adjust the 0.6 to darken/lighten */
+  z-index: -1; 
+  pointer-events: none;
+}
+.card {
+  background: rgba(20, 20, 20, 0.9); /* Nearly solid background */
+  border: 1px solid #0f0; /* Keep the neon theme */
+  padding: 20px;
+  backdrop-filter: blur(5px); /* This blurs the Matrix rain behind the card */
 }

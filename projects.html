@@ -239,7 +239,7 @@
                 let nextLine = this.sequence[this.seqIndex];
                 
                 let isRed = Math.random() < 0.20 || nextLine.includes("VIRUS") || nextLine.includes("CRITICAL") || nextLine.includes("FAILURE") || nextLine.includes("BREACH");
-                let colorToUse = isRed ? "#ff4444" : "#0f0";
+                let colorToUse = isRed ? "#ff4444" : "#006600";
 
                 if (nextLine === "LOADING_BAR") {
                   this.loadingActive = true;
@@ -269,14 +269,14 @@
         draw(windowCtx) {
           if (this.isDead) return;
 
-          windowCtx.fillStyle = "rgba(11, 13, 16, 0.95)";
+          windowCtx.fillStyle = "rgba(11, 13, 16, 0.75)";
           windowCtx.fillRect(this.x, this.y, this.w, this.h);
           
-          windowCtx.strokeStyle = "#0f0";
+          windowCtx.strokeStyle = "#006600";
           windowCtx.lineWidth = 1;
           windowCtx.strokeRect(this.x, this.y, this.w, this.h);
           
-          windowCtx.fillStyle = "#0f0";
+          windowCtx.fillStyle = "#006600";
           windowCtx.fillRect(this.x, this.y, this.w, 24);
           windowCtx.fillStyle = "#000";
           windowCtx.font = 'bold 12px "Fixedsys", "Courier New", monospace';
@@ -338,7 +338,7 @@
             ctx.fillStyle = 'red';
           } else {
             text = chars.charAt(Math.floor(Math.random() * chars.length));
-            ctx.fillStyle = '#0f0';
+            ctx.fillStyle = '#006600';
           }
           
           const x = s.x; 
