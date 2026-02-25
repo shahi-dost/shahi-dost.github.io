@@ -1,15 +1,16 @@
-const canvas = document.getElementById('bg-canvas');
+const canvas = document.getElementById('bgcanvas-nodes');
 const ctx = canvas.getContext('2d');
 
 let width, height, nodes = [], edges = [];
-const nodeCount = 30;
+const nodeCount = 50;
 const mouse = { x: -1000, y: -1000, prevX: -1000, prevY: -1000 };
 
 const colors = [
-  '#ff2200',
-  '#ff2200',
-  '#003cff',
-  '#003cff',
+  '#ff0033',
+  '#ff0033',
+  '#7700ff',
+  '#2600ff',
+  '#2600ff',
 ];
 
 function init() {
@@ -25,8 +26,8 @@ function init() {
       x: Math.random() * width,
       y: Math.random() * height,
       px: 0, py: 0,
-      vx: (Math.random() - 0.5) * 2.5, // Slightly slower for a "floaty" feel
-      vy: (Math.random() - 0.5) * 2.5,
+      vx: (Math.random() - 0.5) * 2,
+      vy: (Math.random() - 0.5) * 1.75,
       color: colors[Math.floor(Math.random() * colors.length)]
     });
   }
@@ -35,6 +36,15 @@ function init() {
   for(let i=0; i<15; i++) {
     addEdge(Math.floor(Math.random()*nodeCount), Math.floor(Math.random()*nodeCount), '#7300ff');
   }
+
+  // --- START PRE-WARM LOOP ---
+  // Simulate 5 seconds of movement (~300 steps at 60fps)
+  // This ensures nodes aren't just in their random starting spots
+  const preWarmSteps = 1000; 
+  for (let i = 0; i < preWarmSteps; i++) {
+    update(); // Run the physics/movement logic without drawing
+  }
+  // --- END PRE-WARM LOOP ---
 }
 
 function addEdge(a, b, color) {

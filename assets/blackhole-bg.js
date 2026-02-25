@@ -42,10 +42,10 @@
   const camZ = () => ringR() * 0.96;
   const fov = 1200;
 
-  const ringAngular = 0.45;
-  const swirlBoostNear = 2.5;
+  const ringAngular = 0.05;
+  const swirlBoostNear = 10;
   const inwardRateInner = 0.35;
-  const inwardRateOuter = 0.75;
+  const inwardRateOuter = 0.95;
 
   const omegaOuterMult = 0.28;
 
@@ -227,7 +227,7 @@ function drawBatch(arr, holePx, allowOverlap) {
     }
 
     setFont(px);
-    ctx.globalAlpha = it.alpha;
+    ctx.globalAlpha = it.alpha * 0.6;;
     ctx.fillStyle = it.isMouse ? `rgb(${mouseGlyphRGB})` : `rgb(${glyphRGB})`;
     ctx.fillText(it.ch, it.sx, it.sy);
   }
@@ -349,7 +349,40 @@ function drawBatch(arr, holePx, allowOverlap) {
 
     requestAnimationFrame(frame);
   }
+resize();
 
-  resize();
+  // --- START PRE-WARM LOOP ---
+  // --- Comment out if want to restart everytime ---
+  // Simulate 10 seconds of activity at 30fps (300 steps)
+  const preWarmSeconds = 10;
+  const simulationStep = 0.033; // ~30fps
+  const totalSteps = preWarmSeconds / simulationStep;
+
+  for (let step = 0; step < totalSteps; step++) {
+    const R = ringR();
+    const H = horizonR();
+
+    // 1. Spawn particles as if time passed
+    ringAcc += simulationStep;
+    const want = ringSpawnPerSec * ringAcc;
+    const k = Math.floor(want);
+    if (k > 0) {
+      ringAcc -= k / ringSpawnPerSec;
+      for (let i = 0; i < k; i++) {
+        if (ringParts.length < maxRingParts) spawnRing();
+      }
+    }
+
+    // 2. Update existing particle positions
+    for (let i = ringParts.length - 1; i >= 0; i--) {
+      const p = ringParts[i];
+      updateSpiral(p, simulationStep, R, H);
+      if (p.rad < H) {
+        ringParts.splice(i, 1);
+        ringPool.push(p);
+      }
+    }
+  }
+  // --- END PRE-WARM LOOP ---
   requestAnimationFrame(frame);
 })();

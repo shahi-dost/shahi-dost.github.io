@@ -42,10 +42,14 @@
   const camZ = () => ringR() * 0.96;
   const fov = 1200;
 
-  const ringAngular = .75;
-  const swirlBoostNear = 2;;
-  const inwardRateInner = 0.35;
-  const inwardRateOuter = 0.2;
+  const ringAngular = .075;
+  const swirlBoostNear = 10;
+  const inwardRateOuter = 0.15;
+
+  // const ringAngular = 0.05;
+  // const swirlBoostNear = 10;
+  // const inwardRateInner = 0.35;
+  // const inwardRateOuter = 0.95;
 
   const omegaOuterMult = 0.28;
   let globalHue = 0; // Tracks the rainbow position
@@ -149,7 +153,7 @@ function spawnRing() {
     p.color = `hsl(${Math.floor(globalHue / 10) * 10}, 80%, 70%)`;
     // SLOW DOWN THE CHANGE: 
     // Lowering this number makes each color (red, orange, etc.) last longer.
-    globalHue = (globalHue + 0.05) % 360; 
+    globalHue = (globalHue + 0.1) % 360; 
 
     ringParts.push(p);
   }
@@ -279,7 +283,43 @@ for (let i = ringParts.length - 1; i >= 0; i--) {
 
     requestAnimationFrame(frame);
   }
+resize();
 
-  resize();
+  // --- START PRE-WARM LOOP ---
+  // Simulate 10 seconds of "white hole" expansion before the first frame
+  const preWarmSeconds = 20;
+  const simulationStep = 0.033; // ~30fps
+  const totalSteps = preWarmSeconds / simulationStep;
+
+  for (let step = 0; step < totalSteps; step++) {
+    const R = ringR();
+    const H = horizonR();
+
+    // 1. Spawn particles as if time had passed
+    // Note: The whitehole logic typically spawns at H and moves toward R
+    ringAcc += simulationStep;
+    const want = ringSpawnPerSec * ringAcc;
+    const k = Math.floor(want);
+    if (k > 0) {
+      ringAcc -= k / ringSpawnPerSec;
+      for (let i = 0; i < k; i++) {
+        if (ringParts.length < maxRingParts) spawnRing();
+      }
+    }
+
+    // 2. Update existing particle positions
+    for (let i = ringParts.length - 1; i >= 0; i--) {
+      const p = ringParts[i];
+      updateSpiral(p, simulationStep, R, H);
+      
+      // Despawn logic specific to your whitehole script (p.rad > R * 1.5)
+      if (p.rad > R * 1.5) { 
+        ringParts.splice(i, 1);
+        ringPool.push(p);
+      }
+    }
+  }
+  // --- END PRE-WARM LOOP ---
+
   requestAnimationFrame(frame);
 })();
